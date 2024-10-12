@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Text Summarization</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.1/aos.css" />
+    <script>
+        function typeOutText(text, element) {
+            element.innerHTML = ""; // Clear previous content
+            let index = 0;
+
+            const interval = setInterval(() => {
+                if (index < text.length) {
+                    element.innerHTML += text[index++];
+                } else {
+                    clearInterval(interval); // Stop the typing effect when done
+                }
+            }, 50); // Adjust the speed here (in milliseconds)
+        }
+
+        function summarizeText(event) {
+            event.preventDefault();
+            var text = document.getElementById("text").value;
+            var loadingElement = document.getElementById("loading");
+            var summaryElement = document.getElementById("summary");
+
+            loadingElement.style.display = "block";
+            summaryElement.innerHTML = "";
+
+            fetch("/summaryizetext", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: "text=" + encodeURIComponent(text),
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadingElement.style.display = "none";
+                typeOutText(data.summary, summaryElement); // Call typing effect
+            })
+            .catch(error => {
+                loadingElement.style.display = "none";
+                summaryElement.innerHTML = "Error: " + error.message;
+            });
+        }
+    </script>
+    <style>
+      body{
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .blinking-cursor {
+            display: inline-block;
+            width: 10px;
+            background-color: black;
+            animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink {
+            50% { background-color: transparent; }
+        }
+
+        .textarea {
+            width: 100%;
+            border-radius: 5px;
+            border: 1px solid #ced4da;
+            padding: 10px;
+            resize: none; /* Prevents resizing */
+        }
+        
+        .button {
+            margin-top: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #loading {
+            margin-top: 10px;
+            display: none; /* Hide by default */
+        }
+
+        #summary {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('landing_page')}}">GenInsights</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link" href="{{url_for('login')}}">Login</a>
+                    <a class="nav-link" href="{{url_for('register')}}">Register</a>
+                    <a class="nav-link" href="{{url_for('summarize')}}">Summarize</a>
+                    <a class="nav-link" href="{{url_for('analyse')}}">Translate</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+      <h2>This is paragraph explainer or summary section</h2>
+        <form onsubmit="summarizeText(event)">
+            <textarea id="text" rows="10" placeholder="Enter text to summarize..." class="textarea"></textarea><br>
+            <button type="submit" class="button">Summarize</button>
+        </form>
+        <div id="loading">Loading...</div> <!-- Loading indicator -->
+        <div id="summary"></div> <!-- Summary will be displayed here -->
+    </div>
+
+    <footer class="">
+        <p>© 2024 GenInsights</p>
+    </footer>
+</body>
+</html>

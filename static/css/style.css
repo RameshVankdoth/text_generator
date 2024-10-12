@@ -1,0 +1,43 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.hero {
+    background: url("{{ url_for('static', filename='images/logo1.png') }}") no-repeat center center/cover;
+    height: 50vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: rgb(43, 78, 233);
+}
+
+.btn-custom {
+    background-color: rgb(43, 78, 233);
+    color: #333;
+    transition: background-color 0.3s;
+}
+
+.btn-custom:hover {
+    background-color: rgb(125, 149, 255);
+}
+
+footer {
+    background-color: #0044cc;
+    color: white;
+    padding: 20px 0;
+}
+
+.feature {
+    margin: 20px 0;
+}
+
+.feature img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s;
+}
+
+.feature img:hover {
+    transform: scale(1.05);
+}
